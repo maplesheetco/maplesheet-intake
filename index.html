@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MapleSheet — Done For You Intake Form</title>
+<style>
+  :root {
+    --red:      #C0392B;
+    --red-dk:   #922B21;
+    --red-lt:   #FDEDEC;
+    --gold:     #F39C12;
+    --gold-lt:  #FEF9E7;
+    --dark:     #1E1E2E;
+    --dark-2:   #2C2C3E;
+    --dark-3:   #3A3A50;
+    --white:    #FFFFFF;
+    --cream:    #FFF9F5;
+    --gray-lt:  #F7F6F4;
+    --gray-mid: #9A9894;
+    --green:    #27AE60;
+    --green-lt: #EAFAF1;
+    --radius:   12px;
+    --radius-sm:8px;
+    --shadow:   0 4px 32px rgba(30,30,46,0.12);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+    background: var(--dark);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ── Header ──────────────────────────────────────────── */
+  .header {
+    background: var(--dark);
+    border-bottom: 3px solid var(--red);
+    padding: 20px 0;
+    text-align: center;
+  }
+  .header-logo { font-size: 13px; color: var(--red); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .header h1 { font-size: 26px; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+  .header p  { font-size: 13px; color: var(--gray-mid); }
+
+  /* ── Progress bar ────────────────────────────────────── */
+  .progress-wrap { background: var(--dark-2); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+  .progress-inner { max-width: 680px; margin: 0 auto; padding: 0 20px; }
+  .progress-steps { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .progress-step { font-size: 11px; font-weight: 600; color: var(--gray-mid); text-align: center; flex: 1; }
+  .progress-step.active { color: var(--gold); }
+  .progress-step.done   { color: var(--green); }
+  .progress-bar { height: 4px; background: var(--dark-3); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--gold)); border-radius: 4px; transition: width 0.4s ease; width: 20%; }
+
+  /* ── Main ────────────────────────────────────────────── */
+  .main { max-width: 680px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* ── Section cards ───────────────────────────────────── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px; padding-bottom: 16px;
+    border-bottom: 2px solid var(--gray-lt);
+  }
+  .section-icon { font-size: 28px; }
+  .section-header h2 { font-size: 18px; font-weight: 800; color: var(--dark); }
+  .section-header p  { font-size: 12px; color: var(--gray-mid); margin-top: 2px; }
+
+  /* ── Form elements ───────────────────────────────────── */
+  .form-group { margin-bottom: 18px; }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 700;
+    color: var(--dark-2); margin-bottom: 6px; letter-spacing: 0.3px;
+  }
+  .form-group label .req { color: var(--red); }
+  .form-control {
+    width: 100%; padding: 11px 14px;
+    border: 2px solid #E8E6E3; border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--dark);
+    background: var(--white); transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .form-control:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,57,43,0.08); }
+  .form-control.error { border-color: var(--red); }
+  .form-hint { font-size: 11px; color: var(--gray-mid); margin-top: 5px; line-height: 1.4; }
+  textarea.form-control { resize: vertical; min-height: 80px; }
+
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ── Product rows ────────────────────────────────────── */
+  .product-row {
+    display: grid; grid-template-columns: 1fr 100px 90px auto;
+    gap: 8px; align-items: end; margin-bottom: 8px;
+  }
+  .btn-remove-prod {
+    width: 36px; height: 36px; background: var(--red-lt); border: 1.5px solid var(--red);
+    border-radius: 50%; color: var(--red); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .btn-remove-prod:hover { background: var(--red); color: var(--white); }
+  .btn-add-prod {
+    width: 100%; padding: 9px; background: var(--gold-lt);
+    border: 2px dashed var(--gold); border-radius: var(--radius-sm);
+    color: var(--gold); font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s; margin-top: 4px;
+  }
+  .btn-add-prod:hover { background: var(--gold); color: var(--white); }
+
+  /* ── Info box ────────────────────────────────────────── */
+  .info-box {
+    background: var(--gold-lt); border: 1.5px solid var(--gold);
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 12px; color: #7D6608; line-height: 1.5;
+    margin-bottom: 18px;
+  }
+  .success-box {
+    background: var(--green-lt); border: 1.5px solid var(--green);
+    border-left: 4px solid var(--green);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 12px; color: #1A5E34; line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  /* ── Navigation ──────────────────────────────────────── */
+  .nav-btns { display: flex; gap: 12px; margin-top: 8px; }
+  .btn-next {
+    flex: 1; padding: 14px; background: var(--red);
+    color: var(--white); border: none; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: all 0.15s; box-shadow: 0 4px 16px rgba(192,57,43,0.25);
+  }
+  .btn-next:hover { background: var(--red-dk); transform: translateY(-1px); }
+  .btn-back {
+    padding: 14px 20px; background: var(--gray-lt);
+    color: var(--dark); border: none; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .btn-submit {
+    flex: 1; padding: 16px; background: var(--green);
+    color: var(--white); border: none; border-radius: var(--radius-sm);
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    transition: all 0.15s; box-shadow: 0 4px 16px rgba(39,174,96,0.30);
+  }
+  .btn-submit:hover { background: #1E8449; transform: translateY(-1px); }
+  .btn-submit:disabled { background: var(--gray-mid); cursor: not-allowed; transform: none; }
+
+  /* ── Review section ──────────────────────────────────── */
+  .review-block { margin-bottom: 16px; }
+  .review-block h3 { font-size: 12px; font-weight: 700; color: var(--gray-mid); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .review-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 0.5px solid var(--gray-lt); font-size: 13px; }
+  .review-row:last-child { border-bottom: none; }
+  .review-row .key { color: var(--gray-mid); }
+  .review-row .val { font-weight: 600; color: var(--dark); text-align: right; max-width: 60%; }
+
+  /* ── Success screen ──────────────────────────────────── */
+  .success-screen { display: none; text-align: center; padding: 48px 24px; }
+  .success-icon { font-size: 64px; margin-bottom: 20px; }
+  .success-screen h2 { font-size: 26px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
+  .success-screen p  { font-size: 14px; color: var(--gray-mid); line-height: 1.7; max-width: 480px; margin: 0 auto; }
+  .next-steps { background: var(--dark-2); border-radius: var(--radius); padding: 24px; margin: 24px auto; max-width: 480px; text-align: left; }
+  .next-steps h3 { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 12px; letter-spacing: 0.5px; }
+  .next-step { display: flex; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--white); }
+  .next-step .num { background: var(--red); color: var(--white); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Select ──────────────────────────────────────────── */
+  select.form-control { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23C0392B' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+  /* ── Checkbox group ──────────────────────────────────── */
+  .check-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-item { display: flex; align-items: center; gap: 6px; }
+  .check-item input { width: 16px; height: 16px; accent-color: var(--red); cursor: pointer; }
+  .check-item label { font-size: 13px; color: var(--dark); cursor: pointer; font-weight: 400; }
+
+  /* ── Spinner ─────────────────────────────────────────── */
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Error msg ───────────────────────────────────────── */
+  .error-msg { background: var(--red-lt); border: 1.5px solid var(--red); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: var(--red-dk); margin-bottom: 12px; display: none; }
+
+  /* ── Mobile ──────────────────────────────────────────── */
+  @media (max-width: 520px) {
+    .form-row-2 { grid-template-columns: 1fr; }
+    .product-row { grid-template-columns: 1fr 80px; }
+    .product-row .price-col,
+    .product-row .status-col { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">🍁 MapleSheet Co.</div>
+  <h1>Done For You — Setup Intake Form</h1>
+  <p>Tell us about your business and we'll build your complete system</p>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-steps">
+      <div class="progress-step active" id="step-lbl-1">1 · Business</div>
+      <div class="progress-step"        id="step-lbl-2">2 · Products</div>
+      <div class="progress-step"        id="step-lbl-3">3 · Pick-Up</div>
+      <div class="progress-step"        id="step-lbl-4">4 · Design</div>
+      <div class="progress-step"        id="step-lbl-5">5 · Review</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1 — Business Details
+  ═══════════════════════════════════════════════ -->
+  <div class="section active" id="section-1">
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-icon">🏠</span>
+        <div>
+          <h2>Your Business Details</h2>
+          <p>Tell us about your home business</p>
+        </div>
+      </div>
+
+      <div class="info-box">
+        📧 After submitting this form, your details will be emailed to us and we'll start building your system within 1 business day. Delivery takes 3–5 business days.
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Business Name <span class="req">*</span></label>
+          <input type="text" id="bizName" class="form-control" placeholder="e.g. Sarah's Sweet Treats"/>
+          <p class="form-hint">What your customers call you</p>
+        </div>
+        <div class="form-group">
+          <label>Owner Name <span class="req">*</span></label>
+          <input type="text" id="ownerName" class="form-control" placeholder="e.g. Sarah Johnson"/>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Your Email Address <span class="req">*</span></label>
+          <input type="email" id="ownerEmail" class="form-control" placeholder="your@gmail.com"/>
+          <p class="form-hint">Where we send your completed system</p>
+        </div>
+        <div class="form-group">
+          <label>CC Email (Partner/Spouse)</label>
+          <input type="email" id="ccEmail" class="form-control" placeholder="partner@gmail.com"/>
+          <p class="form-hint">They'll receive order notifications too</p>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>WhatsApp Number <span class="req">*</span></label>
+          <input type="tel" id="whatsapp" class="form-control" placeholder="e.g. 17781234567"/>
+          <p class="form-hint">Country code + number, no spaces (e.g. 17781234567)</p>
+        </div>
+        <div class="form-group">
+          <label>City & Province/State <span class="req">*</span></label>
+          <input type="text" id="location" class="form-control" placeholder="e.g. Surrey, BC"/>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Currency <span class="req">*</span></label>
+          <select id="currency" class="form-control">
+            <option value="CAD $">CAD $ — Canadian Dollar</option>
+            <option value="USD $">USD $ — US Dollar</option>
+            <option value="AUD $">AUD $ — Australian Dollar</option>
+            <option value="£">£ — British Pound</option>
+            <option value="€">€ — Euro</option>
+            <option value="₱">₱ — Philippine Peso</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Business Type <span class="req">*</span></label>
+          <select id="bizType" class="form-control">
+            <option value="">— Select your business type —</option>
+            <option value="Home Food / Baked Goods">Home Food / Baked Goods</option>
+            <option value="Candles & Home Fragrance">Candles & Home Fragrance</option>
+            <option value="Handmade Crafts & Jewelry">Handmade Crafts & Jewelry</option>
+            <option value="Art & Prints">Art & Prints</option>
+            <option value="Clothing & Textiles">Clothing & Textiles</option>
+            <option value="Mixed — Food & Crafts">Mixed — Food & Crafts</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Tell us about your business</label>
+        <textarea id="bizDesc" class="form-control" rows="3" placeholder="e.g. I sell homemade Filipino food on weekends from my home in Surrey BC. My bestseller is Ilocos Empanada. I take orders through Facebook Marketplace…"></textarea>
+        <p class="form-hint">A brief description helps us customize your system better</p>
+      </div>
+
+      <div id="error-1" class="error-msg">⚠️ Please fill in all required fields before continuing.</div>
+      <div class="nav-btns">
+        <button class="btn-next" onclick="nextSection(1)">Next — Your Products →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 2 — Products
+  ═══════════════════════════════════════════════ -->
+  <div class="section" id="section-2">
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-icon">🛒</span>
+        <div>
+          <h2>Your Products</h2>
+          <p>Add the products or services you sell</p>
+        </div>
+      </div>
+
+      <div class="info-box">
+        💡 Add up to 10 products. Include the product name, your selling price, and the cost to make it. We'll set up the margin calculations for you!
+      </div>
+
+      <!-- Product headers -->
+      <div class="product-row" style="margin-bottom:4px;">
+        <label style="font-size:11px;font-weight:700;color:var(--gray-mid);">PRODUCT NAME <span class="req">*</span></label>
+        <label class="price-col" style="font-size:11px;font-weight:700;color:var(--gray-mid);">SELL PRICE</label>
+        <label class="status-col" style="font-size:11px;font-weight:700;color:var(--gray-mid);">COST/UNIT</label>
+        <span></span>
+      </div>
+
+      <div id="productRows"></div>
+      <button class="btn-add-prod" onclick="addProductRow()">➕ Add Another Product</button>
+
+      <div style="margin-top:20px;" class="form-group">
+        <label>Payment Methods You Accept <span class="req">*</span></label>
+        <div class="check-group" id="paymentMethods">
+          <div class="check-item"><input type="checkbox" id="pay-cash" value="Cash"><label for="pay-cash">Cash on Pick-Up</label></div>
+          <div class="check-item"><input type="checkbox" id="pay-etransfer" value="E-Transfer"><label for="pay-etransfer">E-Transfer</label></div>
+          <div class="check-item"><input type="checkbox" id="pay-paypal" value="PayPal"><label for="pay-paypal">PayPal</label></div>
+          <div class="check-item"><input type="checkbox" id="pay-venmo" value="Venmo"><label for="pay-venmo">Venmo</label></div>
+          <div class="check-item"><input type="checkbox" id="pay-credit" value="Credit Card"><label for="pay-credit">Credit Card</label></div>
+          <div class="check-item"><input type="checkbox" id="pay-other" value="Other"><label for="pay-other">Other</label></div>
+        </div>
+      </div>
+
+      <div id="error-2" class="error-msg">⚠️ Please add at least one product before continuing.</div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="prevSection(2)">← Back</button>
+        <button class="btn-next" onclick="nextSection(2)">Next — Pick-Up Setup →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 3 — Pick-Up Details
+  ═══════════════════════════════════════════════ -->
+  <div class="section" id="section-3">
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-icon">📅</span>
+        <div>
+          <h2>Pick-Up & Order Details</h2>
+          <p>How and when do customers pick up their orders?</p>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Pick-Up Hours Start <span class="req">*</span></label>
+          <select id="pickupStart" class="form-control">
+            <option value="8:00 AM">8:00 AM</option>
+            <option value="9:00 AM">9:00 AM</option>
+            <option value="10:00 AM" selected>10:00 AM</option>
+            <option value="11:00 AM">11:00 AM</option>
+            <option value="12:00 PM">12:00 PM</option>
+            <option value="1:00 PM">1:00 PM</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pick-Up Hours End <span class="req">*</span></label>
+          <select id="pickupEnd" class="form-control">
+            <option value="2:00 PM">2:00 PM</option>
+            <option value="3:00 PM">3:00 PM</option>
+            <option value="4:00 PM">4:00 PM</option>
+            <option value="5:00 PM" selected>5:00 PM</option>
+            <option value="6:00 PM">6:00 PM</option>
+            <option value="7:00 PM">7:00 PM</option>
+            <option value="8:00 PM">8:00 PM</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Time Slot Interval <span class="req">*</span></label>
+          <select id="slotInterval" class="form-control">
+            <option value="15">Every 15 minutes</option>
+            <option value="30" selected>Every 30 minutes</option>
+            <option value="60">Every 1 hour</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Max Customers Per Time Slot <span class="req">*</span></label>
+          <select id="maxPerSlot" class="form-control">
+            <option value="1" selected>1 — One customer per slot</option>
+            <option value="2">2 — Two customers per slot</option>
+            <option value="3">3 — Three customers per slot</option>
+            <option value="5">5 — Five customers per slot</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Pick-Up Days <span class="req">*</span></label>
+        <div class="check-group">
+          <div class="check-item"><input type="checkbox" id="day-mon" value="Monday"><label for="day-mon">Monday</label></div>
+          <div class="check-item"><input type="checkbox" id="day-tue" value="Tuesday"><label for="day-tue">Tuesday</label></div>
+          <div class="check-item"><input type="checkbox" id="day-wed" value="Wednesday"><label for="day-wed">Wednesday</label></div>
+          <div class="check-item"><input type="checkbox" id="day-thu" value="Thursday"><label for="day-thu">Thursday</label></div>
+          <div class="check-item"><input type="checkbox" id="day-fri" value="Friday"><label for="day-fri">Friday</label></div>
+          <div class="check-item"><input type="checkbox" id="day-sat" value="Saturday" checked><label for="day-sat">Saturday</label></div>
+          <div class="check-item"><input type="checkbox" id="day-sun" value="Sunday" checked><label for="day-sun">Sunday</label></div>
+        </div>
+        <p class="form-hint">Select all days you're available for pick-up</p>
+      </div>
+
+      <div class="form-group">
+        <label>Hourly Labor Rate (what you pay yourself)</label>
+        <input type="number" id="laborRate" class="form-control" placeholder="e.g. 20" min="0"/>
+        <p class="form-hint">Used to calculate your labor cost. Leave blank if unsure — we'll set a default.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Revenue Goal</label>
+        <input type="number" id="revenueGoal" class="form-control" placeholder="e.g. 1500" min="0"/>
+        <p class="form-hint">Your target monthly revenue in your chosen currency</p>
+      </div>
+
+      <div class="form-group">
+        <label>Any special instructions or requests?</label>
+        <textarea id="specialReq" class="form-control" rows="3" placeholder="e.g. I have a minimum order of 6 pcs for Empanada, my pricing has a bulk discount every 6 pcs, I want the system in dark mode, etc."></textarea>
+      </div>
+
+      <div id="error-3" class="error-msg">⚠️ Please fill in all required fields before continuing.</div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="prevSection(3)">← Back</button>
+        <button class="btn-next" onclick="nextSection(3)">Next — Design Preferences →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 4 — Design Preferences
+  ═══════════════════════════════════════════════ -->
+  <div class="section" id="section-4">
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-icon">🎨</span>
+        <div>
+          <h2>Design Preferences</h2>
+          <p>Tell us how you want your Web App to look</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Preferred Color Theme</label>
+        <select id="colorTheme" class="form-control">
+          <option value="Maple Red & Gold (default)">🍁 Maple Red & Gold — warm and professional (default)</option>
+          <option value="Ocean Blue & Teal">🌊 Ocean Blue & Teal — calm and trustworthy</option>
+          <option value="Forest Green & Gold">🌿 Forest Green & Gold — natural and fresh</option>
+          <option value="Deep Purple & Gold">💜 Deep Purple & Gold — elegant and creative</option>
+          <option value="Coral & Peach">🌸 Coral & Peach — soft and friendly</option>
+          <option value="Classic Black & Gold">⭐ Classic Black & Gold — bold and premium</option>
+          <option value="I'll leave it to you">🎨 I'll leave it to you — surprise me!</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Business Emoji / Logo Icon</label>
+        <input type="text" id="bizEmoji" class="form-control" placeholder="e.g. 🍽️ or 🕯️ or 💍 or 🎨"/>
+        <p class="form-hint">We'll use this as your logo icon on the Web App. Type any emoji that represents your business!</p>
+      </div>
+
+      <div class="form-group">
+        <label>Web App Tagline</label>
+        <input type="text" id="tagline" class="form-control" placeholder="e.g. Fresh & Made with Love · Weekends Only"/>
+        <p class="form-hint">A short phrase that appears under your business name. Leave blank for a default.</p>
+      </div>
+
+      <div class="form-group">
+        <label>Do you have a website or social media link?</label>
+        <input type="text" id="socialLink" class="form-control" placeholder="e.g. facebook.com/yourpage or instagram.com/yourhandle"/>
+        <p class="form-hint">Optional — we can add a link to your social page from your Web App</p>
+      </div>
+
+      <div class="form-group">
+        <label>Anything else we should know about your brand or style?</label>
+        <textarea id="brandNotes" class="form-control" rows="3" placeholder="e.g. My brand is warm and Filipino-inspired, my customers are mostly families, I want it to feel homey and welcoming…"></textarea>
+      </div>
+
+      <div id="error-4" class="error-msg"></div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="prevSection(4)">← Back</button>
+        <button class="btn-next" onclick="nextSection(4)">Next — Review & Submit →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 5 — Review & Submit
+  ═══════════════════════════════════════════════ -->
+  <div class="section" id="section-5">
+    <div class="section-card">
+      <div class="section-header">
+        <span class="section-icon">✅</span>
+        <div>
+          <h2>Review & Submit</h2>
+          <p>Check everything looks correct before submitting</p>
+        </div>
+      </div>
+
+      <div class="review-block">
+        <h3>🏠 Business Details</h3>
+        <div id="review-business"></div>
+      </div>
+
+      <div class="review-block">
+        <h3>🛒 Products</h3>
+        <div id="review-products"></div>
+      </div>
+
+      <div class="review-block">
+        <h3>📅 Pick-Up Setup</h3>
+        <div id="review-pickup"></div>
+      </div>
+
+      <div class="review-block">
+        <h3>🎨 Design</h3>
+        <div id="review-design"></div>
+      </div>
+
+      <div class="success-box">
+        ✅ By submitting this form, we'll email you within 1 business day to confirm your order. Your completed system will be delivered within <strong>3–5 business days</strong>. We'll email everything to <span id="review-email-confirm" style="font-weight:700;"></span>.
+      </div>
+
+      <div id="error-5" class="error-msg"></div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="prevSection(5)">← Edit</button>
+        <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+          🚀 Submit My Order Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SUCCESS SCREEN
+  ═══════════════════════════════════════════════ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">🎉</div>
+    <h2>Details Received!</h2>
+    <p>Thank you! We've received your business details and will start building your MapleSheet system right away.</p>
+
+    <div class="next-steps">
+      <h3>WHAT HAPPENS NEXT</h3>
+      <div class="next-step"><div class="num">1</div><div>We review your details and send you a confirmation email within 1 business day</div></div>
+      <div class="next-step"><div class="num">2</div><div>We build and customize your complete system — spreadsheet, Web App, scripts, everything</div></div>
+      <div class="next-step"><div class="num">3</div><div>We test everything to make sure it works perfectly</div></div>
+      <div class="next-step"><div class="num">4</div><div>We deliver your complete system by email within 3–5 business days</div></div>
+      <div class="next-step"><div class="num">5</div><div>You start taking orders and growing your business! 🚀</div></div>
+    </div>
+
+    <p style="color:var(--gray-mid);font-size:13px;margin-top:8px;">Questions? Email us at <strong style="color:var(--gold);">hello@maplesheet.ca</strong></p>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+let currentSection = 1;
+const totalSections = 5;
+let products = [];
+
+// ── Init ───────────────────────────────────────────────────────
+window.onload = function() {
+  addProductRow();
+  addProductRow();
+  addProductRow();
+  updateProgress();
+};
+
+// ── Product rows ───────────────────────────────────────────────
+function addProductRow() {
+  if (products.length >= 10) return;
+  const id  = Date.now();
+  products.push(id);
+  const container = document.getElementById('productRows');
+  const div = document.createElement('div');
+  div.className = 'product-row';
+  div.id = 'prod-' + id;
+  div.innerHTML =
+    '<input type="text"   class="form-control" placeholder="Product name (e.g. Chocolate Chip Cookies — Dozen)" id="pname-'+id+'"/>' +
+    '<input type="number" class="form-control price-col" placeholder="Price" id="pprice-'+id+'" min="0" step="0.01"/>' +
+    '<input type="number" class="form-control status-col" placeholder="Cost" id="pcost-'+id+'" min="0" step="0.01"/>' +
+    '<button class="btn-remove-prod" onclick="removeProduct('+id+')">×</button>';
+  container.appendChild(div);
+}
+
+function removeProduct(id) {
+  if (products.length <= 1) return;
+  products = products.filter(p => p !== id);
+  const el = document.getElementById('prod-' + id);
+  if (el) el.remove();
+}
+
+// ── Progress ───────────────────────────────────────────────────
+function updateProgress() {
+  const pct = (currentSection / totalSections) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  for (let i = 1; i <= totalSections; i++) {
+    const lbl = document.getElementById('step-lbl-' + i);
+    lbl.classList.remove('active','done');
+    if (i === currentSection) lbl.classList.add('active');
+    else if (i < currentSection) lbl.classList.add('done');
+  }
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+function nextSection(from) {
+  if (!validateSection(from)) return;
+  if (from === totalSections - 1) buildReview();
+  document.getElementById('section-' + from).classList.remove('active');
+  currentSection = from + 1;
+  document.getElementById('section-' + currentSection).classList.add('active');
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+function prevSection(from) {
+  document.getElementById('section-' + from).classList.remove('active');
+  currentSection = from - 1;
+  document.getElementById('section-' + currentSection).classList.add('active');
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+// ── Validation ─────────────────────────────────────────────────
+function validateSection(num) {
+  const errEl = document.getElementById('error-' + num);
+  errEl.style.display = 'none';
+
+  if (num === 1) {
+    const name  = document.getElementById('bizName').value.trim();
+    const owner = document.getElementById('ownerName').value.trim();
+    const email = document.getElementById('ownerEmail').value.trim();
+    const wa    = document.getElementById('whatsapp').value.trim();
+    const loc   = document.getElementById('location').value.trim();
+    const type  = document.getElementById('bizType').value;
+    if (!name || !owner || !email || !wa || !loc || !type) {
+      errEl.textContent = '⚠️ Please fill in all required fields before continuing.';
+      errEl.style.display = 'block'; return false;
+    }
+    if (!email.includes('@')) {
+      errEl.textContent = '⚠️ Please enter a valid email address.';
+      errEl.style.display = 'block'; return false;
+    }
+  }
+
+  if (num === 2) {
+    const hasProduct = products.some(id => {
+      const name = document.getElementById('pname-'+id);
+      return name && name.value.trim() !== '';
+    });
+    if (!hasProduct) {
+      errEl.textContent = '⚠️ Please add at least one product.';
+      errEl.style.display = 'block'; return false;
+    }
+    const hasPay = document.querySelectorAll('#paymentMethods input:checked').length > 0;
+    if (!hasPay) {
+      errEl.textContent = '⚠️ Please select at least one payment method.';
+      errEl.style.display = 'block'; return false;
+    }
+  }
+
+  if (num === 3) {
+    const hasDays = document.querySelectorAll('[id^="day-"]:checked').length > 0;
+    if (!hasDays) {
+      errEl.textContent = '⚠️ Please select at least one pick-up day.';
+      errEl.style.display = 'block'; return false;
+    }
+  }
+
+  return true;
+}
+
+// ── Build Review ───────────────────────────────────────────────
+function buildReview() {
+  // Business
+  const biz = [
+    ['Business Name',    document.getElementById('bizName').value],
+    ['Owner Name',       document.getElementById('ownerName').value],
+    ['Email',            document.getElementById('ownerEmail').value],
+    ['CC Email',         document.getElementById('ccEmail').value || '—'],
+    ['WhatsApp',         document.getElementById('whatsapp').value],
+    ['Location',         document.getElementById('location').value],
+    ['Currency',         document.getElementById('currency').value],
+    ['Business Type',    document.getElementById('bizType').value],
+  ];
+  document.getElementById('review-business').innerHTML = biz.map(([k,v]) =>
+    `<div class="review-row"><span class="key">${k}</span><span class="val">${v}</span></div>`
+  ).join('');
+
+  document.getElementById('review-email-confirm').textContent = document.getElementById('ownerEmail').value;
+
+  // Products
+  const prodRows = products
+    .filter(id => document.getElementById('pname-'+id)?.value.trim())
+    .map(id => {
+      const name  = document.getElementById('pname-'+id)?.value || '';
+      const price = document.getElementById('pprice-'+id)?.value || '—';
+      const cost  = document.getElementById('pcost-'+id)?.value  || '—';
+      return `<div class="review-row"><span class="key">${name}</span><span class="val">$${price} / Cost: $${cost}</span></div>`;
+    });
+  const pays = [...document.querySelectorAll('#paymentMethods input:checked')].map(el=>el.value).join(', ');
+  document.getElementById('review-products').innerHTML =
+    prodRows.join('') +
+    `<div class="review-row"><span class="key">Payment Methods</span><span class="val">${pays}</span></div>`;
+
+  // Pick-up
+  const days = [...document.querySelectorAll('[id^="day-"]:checked')].map(el=>el.value).join(', ');
+  const pickup = [
+    ['Pick-Up Hours',   document.getElementById('pickupStart').value + ' — ' + document.getElementById('pickupEnd').value],
+    ['Time Slots',      'Every ' + document.getElementById('slotInterval').value + ' minutes'],
+    ['Max Per Slot',    document.getElementById('maxPerSlot').value + ' customer(s)'],
+    ['Available Days',  days],
+    ['Hourly Rate',     document.getElementById('laborRate').value ? '$'+document.getElementById('laborRate').value+'/hr' : 'Default'],
+    ['Revenue Goal',    document.getElementById('revenueGoal').value ? '$'+document.getElementById('revenueGoal').value : 'Default'],
+  ];
+  const specReq = document.getElementById('specialReq').value;
+  if (specReq) pickup.push(['Special Requests', specReq]);
+  document.getElementById('review-pickup').innerHTML = pickup.map(([k,v]) =>
+    `<div class="review-row"><span class="key">${k}</span><span class="val">${v}</span></div>`
+  ).join('');
+
+  // Design
+  const design = [
+    ['Color Theme',  document.getElementById('colorTheme').value],
+    ['Logo Emoji',   document.getElementById('bizEmoji').value || 'Default'],
+    ['Tagline',      document.getElementById('tagline').value || 'Default'],
+    ['Social Link',  document.getElementById('socialLink').value || '—'],
+  ];
+  const brandNotes = document.getElementById('brandNotes').value;
+  if (brandNotes) design.push(['Brand Notes', brandNotes]);
+  document.getElementById('review-design').innerHTML = design.map(([k,v]) =>
+    `<div class="review-row"><span class="key">${k}</span><span class="val">${v}</span></div>`
+  ).join('');
+}
+
+// ── Submit ─────────────────────────────────────────────────────
+function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+  // Collect all data
+  const prodList = products
+    .filter(id => document.getElementById('pname-'+id)?.value.trim())
+    .map(id => ({
+      name:  document.getElementById('pname-'+id)?.value  || '',
+      price: document.getElementById('pprice-'+id)?.value || '',
+      cost:  document.getElementById('pcost-'+id)?.value  || '',
+    }));
+
+  const days = [...document.querySelectorAll('[id^="day-"]:checked')].map(el=>el.value);
+  const pays = [...document.querySelectorAll('#paymentMethods input:checked')].map(el=>el.value);
+
+  const formData = {
+    bizName:      document.getElementById('bizName').value,
+    ownerName:    document.getElementById('ownerName').value,
+    ownerEmail:   document.getElementById('ownerEmail').value,
+    ccEmail:      document.getElementById('ccEmail').value,
+    whatsapp:     document.getElementById('whatsapp').value,
+    location:     document.getElementById('location').value,
+    currency:     document.getElementById('currency').value,
+    bizType:      document.getElementById('bizType').value,
+    bizDesc:      document.getElementById('bizDesc').value,
+    products:     prodList,
+    paymentMethods: pays,
+    pickupStart:  document.getElementById('pickupStart').value,
+    pickupEnd:    document.getElementById('pickupEnd').value,
+    slotInterval: document.getElementById('slotInterval').value,
+    maxPerSlot:   document.getElementById('maxPerSlot').value,
+    pickupDays:   days,
+    laborRate:    document.getElementById('laborRate').value,
+    revenueGoal:  document.getElementById('revenueGoal').value,
+    specialReq:   document.getElementById('specialReq').value,
+    colorTheme:   document.getElementById('colorTheme').value,
+    bizEmoji:     document.getElementById('bizEmoji').value,
+    tagline:      document.getElementById('tagline').value,
+    socialLink:   document.getElementById('socialLink').value,
+    brandNotes:   document.getElementById('brandNotes').value,
+    submittedAt:  new Date().toISOString(),
+  };
+
+  // Build email body
+  const subject = encodeURIComponent('🍁 MapleSheet Done For You — ' + formData.bizName);
+  let body = '🍁 MAPLESHEET DONE FOR YOU — NEW CLIENT INTAKE\n\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'BUSINESS DETAILS\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'Business Name:  ' + formData.bizName + '\n';
+  body += 'Owner Name:     ' + formData.ownerName + '\n';
+  body += 'Email:          ' + formData.ownerEmail + '\n';
+  body += 'CC Email:       ' + (formData.ccEmail || 'N/A') + '\n';
+  body += 'WhatsApp:       ' + formData.whatsapp + '\n';
+  body += 'Location:       ' + formData.location + '\n';
+  body += 'Currency:       ' + formData.currency + '\n';
+  body += 'Business Type:  ' + formData.bizType + '\n';
+  body += 'Description:    ' + (formData.bizDesc || 'N/A') + '\n\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'PRODUCTS\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  formData.products.forEach((p,i) => {
+    body += (i+1) + '. ' + p.name + ' | Price: $' + (p.price||'?') + ' | Cost: $' + (p.cost||'?') + '\n';
+  });
+  body += 'Payment Methods: ' + formData.paymentMethods.join(', ') + '\n\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'PICK-UP SETUP\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'Hours:          ' + formData.pickupStart + ' — ' + formData.pickupEnd + '\n';
+  body += 'Slot Interval:  Every ' + formData.slotInterval + ' minutes\n';
+  body += 'Max Per Slot:   ' + formData.maxPerSlot + '\n';
+  body += 'Pick-Up Days:   ' + formData.pickupDays.join(', ') + '\n';
+  body += 'Labor Rate:     $' + (formData.laborRate || '20') + '/hr\n';
+  body += 'Revenue Goal:   $' + (formData.revenueGoal || '1500') + '\n';
+  body += 'Special Req:    ' + (formData.specialReq || 'None') + '\n\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'DESIGN PREFERENCES\n';
+  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  body += 'Color Theme:    ' + formData.colorTheme + '\n';
+  body += 'Logo Emoji:     ' + (formData.bizEmoji || 'Default') + '\n';
+  body += 'Tagline:        ' + (formData.tagline || 'Default') + '\n';
+  body += 'Social Link:    ' + (formData.socialLink || 'N/A') + '\n';
+  body += 'Brand Notes:    ' + (formData.brandNotes || 'N/A') + '\n\n';
+  body += 'Submitted: ' + new Date().toLocaleString();
+
+  // Open mail client with pre-filled email
+  // UPDATE THIS EMAIL to your own!
+  const mailto = 'mailto:hello@maplesheet.ca?cc=donlino214@gmail.com&subject=' + subject + '&body=' + encodeURIComponent(body);
+  window.location.href = mailto;
+
+  // Show success screen after short delay
+  setTimeout(() => {
+    document.getElementById('section-5').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'block';
+    document.querySelector('.progress-wrap').style.display = 'none';
+    window.scrollTo(0, 0);
+  }, 1500);
+}
+</script>
+</body>
+</html>
