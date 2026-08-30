@@ -200,6 +200,11 @@
     .product-row .status-col { display: none; }
   }
 </style>
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    emailjs.init('AuaAnKOkn6vm_VZ9z');
+  </script>
 </head>
 <body>
 
@@ -820,60 +825,70 @@ function submitForm() {
     submittedAt:  new Date().toISOString(),
   };
 
-  // Build email body
-  const subject = encodeURIComponent('🍁 MapleSheet Done For You — ' + formData.bizName);
-  let body = '🍁 MAPLESHEET DONE FOR YOU — NEW CLIENT INTAKE\n\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'BUSINESS DETAILS\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'Business Name:  ' + formData.bizName + '\n';
-  body += 'Owner Name:     ' + formData.ownerName + '\n';
-  body += 'Email:          ' + formData.ownerEmail + '\n';
-  body += 'CC Email:       ' + (formData.ccEmail || 'N/A') + '\n';
-  body += 'WhatsApp:       ' + formData.whatsapp + '\n';
-  body += 'Location:       ' + formData.location + '\n';
-  body += 'Currency:       ' + formData.currency + '\n';
-  body += 'Business Type:  ' + formData.bizType + '\n';
-  body += 'Description:    ' + (formData.bizDesc || 'N/A') + '\n\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'PRODUCTS\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  // Build message body
+  let message = '🍁 MAPLESHEET DONE FOR YOU — NEW CLIENT INTAKE\n\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'BUSINESS DETAILS\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'Business Name:  ' + formData.bizName + '\n';
+  message += 'Owner Name:     ' + formData.ownerName + '\n';
+  message += 'Email:          ' + formData.ownerEmail + '\n';
+  message += 'CC Email:       ' + (formData.ccEmail || 'N/A') + '\n';
+  message += 'WhatsApp:       ' + formData.whatsapp + '\n';
+  message += 'Location:       ' + formData.location + '\n';
+  message += 'Currency:       ' + formData.currency + '\n';
+  message += 'Business Type:  ' + formData.bizType + '\n';
+  message += 'Description:    ' + (formData.bizDesc || 'N/A') + '\n\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'PRODUCTS\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
   formData.products.forEach((p,i) => {
-    body += (i+1) + '. ' + p.name + ' | Price: $' + (p.price||'?') + ' | Cost: $' + (p.cost||'?') + '\n';
+    message += (i+1) + '. ' + p.name + ' | Price: $' + (p.price||'?') + ' | Cost: $' + (p.cost||'?') + '\n';
   });
-  body += 'Payment Methods: ' + formData.paymentMethods.join(', ') + '\n\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'PICK-UP SETUP\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'Hours:          ' + formData.pickupStart + ' — ' + formData.pickupEnd + '\n';
-  body += 'Slot Interval:  Every ' + formData.slotInterval + ' minutes\n';
-  body += 'Max Per Slot:   ' + formData.maxPerSlot + '\n';
-  body += 'Pick-Up Days:   ' + formData.pickupDays.join(', ') + '\n';
-  body += 'Labor Rate:     $' + (formData.laborRate || '20') + '/hr\n';
-  body += 'Revenue Goal:   $' + (formData.revenueGoal || '1500') + '\n';
-  body += 'Special Req:    ' + (formData.specialReq || 'None') + '\n\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'DESIGN PREFERENCES\n';
-  body += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-  body += 'Color Theme:    ' + formData.colorTheme + '\n';
-  body += 'Logo Emoji:     ' + (formData.bizEmoji || 'Default') + '\n';
-  body += 'Tagline:        ' + (formData.tagline || 'Default') + '\n';
-  body += 'Social Link:    ' + (formData.socialLink || 'N/A') + '\n';
-  body += 'Brand Notes:    ' + (formData.brandNotes || 'N/A') + '\n\n';
-  body += 'Submitted: ' + new Date().toLocaleString();
+  message += 'Payment Methods: ' + formData.paymentMethods.join(', ') + '\n\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'PICK-UP SETUP\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'Hours:          ' + formData.pickupStart + ' — ' + formData.pickupEnd + '\n';
+  message += 'Slot Interval:  Every ' + formData.slotInterval + ' minutes\n';
+  message += 'Max Per Slot:   ' + formData.maxPerSlot + '\n';
+  message += 'Pick-Up Days:   ' + formData.pickupDays.join(', ') + '\n';
+  message += 'Labor Rate:     $' + (formData.laborRate || '20') + '/hr\n';
+  message += 'Revenue Goal:   $' + (formData.revenueGoal || '1500') + '\n';
+  message += 'Special Req:    ' + (formData.specialReq || 'None') + '\n\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'DESIGN PREFERENCES\n';
+  message += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  message += 'Color Theme:    ' + formData.colorTheme + '\n';
+  message += 'Logo Emoji:     ' + (formData.bizEmoji || 'Default') + '\n';
+  message += 'Tagline:        ' + (formData.tagline || 'Default') + '\n';
+  message += 'Social Link:    ' + (formData.socialLink || 'N/A') + '\n';
+  message += 'Brand Notes:    ' + (formData.brandNotes || 'N/A') + '\n\n';
+  message += 'Submitted: ' + new Date().toLocaleString();
 
-  // Open mail client with pre-filled email
-  // UPDATE THIS EMAIL to your own!
-  const mailto = 'mailto:hello@maplesheet.ca?cc=donlino214@gmail.com&subject=' + subject + '&body=' + encodeURIComponent(body);
-  window.location.href = mailto;
-
-  // Show success screen after short delay
-  setTimeout(() => {
+  // Send via EmailJS
+  emailjs.send(
+    'service_r3olhah',
+    'template_qqcdpkx',
+    {
+      business_name: formData.bizName,
+      name:          formData.ownerName,
+      email:         formData.ownerEmail,
+      message:       message,
+    }
+  ).then(function() {
     document.getElementById('section-5').style.display = 'none';
     document.getElementById('successScreen').style.display = 'block';
     document.querySelector('.progress-wrap').style.display = 'none';
     window.scrollTo(0, 0);
-  }, 1500);
+  }, function(error) {
+    const errEl = document.getElementById('error-5');
+    errEl.textContent = '⚠️ Could not send. Please email us directly at hello@maplesheet.ca';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Submit My Order Details';
+    console.error('EmailJS error:', error);
+  });
 }
 </script>
 </body>
